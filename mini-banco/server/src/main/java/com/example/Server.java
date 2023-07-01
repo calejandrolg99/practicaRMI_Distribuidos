@@ -107,8 +107,30 @@ public class Server extends UnicastRemoteObject implements BankInterface {
     }
 
 private static Server loadData() throws IOException {
+    File file = new File("data.json");
     ObjectMapper mapper = new ObjectMapper();
-    Server server = mapper.readValue(new File("data.json"), new TypeReference<Server>() {});
+    Server server = null;
+    
+    // Check if the file is empty
+    if (file.length() == 0) {
+        // If the file is empty, initialize server with an empty list of users
+        try {
+            server = new Server();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    } else {
+        // If the file is not empty, read the list of users from the file
+        List<User> users = mapper.readValue(file, new TypeReference<List<User>>() {});
+        try {
+            server = new Server();
+            server.users = users;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    
     return server;
 }
+
 }

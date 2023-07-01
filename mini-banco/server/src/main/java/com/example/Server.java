@@ -31,9 +31,9 @@ public class Server extends UnicastRemoteObject implements BankInterface {
 
     public String withdraw(String accountNumber, double amount) throws RemoteException {
         for (User user : users) {
-            if (user.getAccount().getAccountNumber().equals(accountNumber)) {
+            if (user.getAccount(accountNumber).equals(accountNumber)) {
                 Withdrawal withdraw = new Withdrawal(amount, "Withdraw");
-                user.getAccount().getTransactions().add(withdraw);
+                user.getAccount(accountNumber).getTransactions().add(withdraw);
                 saveData();
                 return "Withdraw successful";
             }
@@ -43,11 +43,11 @@ public class Server extends UnicastRemoteObject implements BankInterface {
 
     public String transfer (String fromAccountNumber, String toAccountNumber, double amount) throws RemoteException {
         for (User user : users) {
-            if (user.getAccount().getAccountNumber().equals(fromAccountNumber)) {
+            if (user.getAccount(fromAccountNumber).equals(fromAccountNumber)) {
                 for (User user2 : users) {
-                    if (user2.getAccount().getAccountNumber().equals(toAccountNumber)) {
-                        Transference transfer = new Transference(amount, "Transfer", user2.getAccount());
-                        user.getAccount().getTransactions().add(transfer);
+                    if (user2.getAccount(toAccountNumber).equals(toAccountNumber)) {
+                        Transference transfer = new Transference(amount, "Transfer", user2.getAccount(toAccountNumber));
+                        user.getAccount(toAccountNumber).getTransactions().add(transfer);
                         saveData();
                         return "Transfer successful";
                     }
@@ -61,7 +61,7 @@ public class Server extends UnicastRemoteObject implements BankInterface {
     public String getAccountDetails(String accountId) {
         // Implementation of the getAccountDetails method
         // Return the account details as a String
-        String whatever;
+        String whatever = "whatever";
         return whatever;
     }
 
@@ -76,9 +76,9 @@ public class Server extends UnicastRemoteObject implements BankInterface {
     @Override
     public String deposit(String accountNumber, double amount) throws RemoteException {
         for (User user : users) {
-            if (user.getAccount().getAccountNumber().equals(accountNumber)) {
+            if (user.getAccount(accountNumber).equals(accountNumber)) {
                 Deposit deposit = new Deposit(amount, "Deposit");
-                user.getAccount().getTransactions().add(deposit);
+                user.getAccount(accountNumber).getTransactions().add(deposit);
                 saveData();
                 return "Deposit successful";
             }
@@ -106,16 +106,9 @@ public class Server extends UnicastRemoteObject implements BankInterface {
         }
     }
 
-    private static Server loadData() {
-        ObjectMapper mapper = new ObjectMapper();
-        Server server;
-        try {
-            server = new Server();
-            server.users = mapper.readValue(new File("data.json"), new TypeReference<List<User>>() {});
-        } catch (IOException e) {
-            e.printStackTrace();
-            server = new Server();
-        }
-        return server;
-    }
+private static Server loadData() throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    Server server = mapper.readValue(new File("data.json"), new TypeReference<Server>() {});
+    return server;
+}
 }

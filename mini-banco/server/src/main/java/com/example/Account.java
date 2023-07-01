@@ -1,9 +1,8 @@
 package com.example;
+
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.ArrayList;
 import java.util.List;
-import com.example.Transaction;
-import com.example.Deposit;
 
 @JsonPropertyOrder({"accountNumber", "balance", "transactions"})
 public class Account {
@@ -18,9 +17,25 @@ public class Account {
         this.transactions.add(new Deposit(initialDeposit, "Depósito inicial"));
     }
 
-    public Account getAccount() {
-        return this;
+    public String getAccountNumber() {
+        return this.accountNumber;
     }
 
-    // Getters, Setters and other methods like deposit, withdraw, etc...
+    // Añade los demás getters y setters según sean necesarios
+
+    public double getBalance() {
+        return this.balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public List<Transaction> getTransactions() {
+        return this.transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
 }

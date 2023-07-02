@@ -16,6 +16,7 @@ import com.example.Transaction;
 import com.example.Deposit;
 import com.example.Withdrawal;
 import com.example.Transference;
+import java.util.Random;
 
 public class Server extends UnicastRemoteObject implements BankInterface {
     private List<User> users;
@@ -68,23 +69,38 @@ public class Server extends UnicastRemoteObject implements BankInterface {
     @Override
     public String createAccount(String id, String name, String username, String password) throws RemoteException {
         User newUser = new User(id, name, username, password);
+
+        // Generar un número de cuenta aleatorio
+        String accountNumber = String.format("%09d", new Random().nextInt(1_000_000_000));
+
+        // Crear una nueva cuenta y añadirla a la lista de cuentas del usuario
+        Account newAccount = new Account(accountNumber, 0);
+        newUser.getAccounts().add(newAccount); 
+
         users.add(newUser);
         saveData();
-        return "Account created";
+        return "Account created with account number: " + accountNumber;
     }
 
     @Override
     public String deposit(String accountNumber, double amount) throws RemoteException {
         for (User user : users) {
-            if (user.getAccount(accountNumber).equals(accountNumber)) {
-                Deposit deposit = new Deposit(amount, "Deposit");
-                user.getAccount(accountNumber).getTransactions().add(deposit);
-                saveData();
-                return "Deposit successful";
+            Account account = user.getAccount(accountNumber);
+            if (account != null) {
+                List<Transaction> transactions = account.getTransactions();
+                if (transactions != null) {
+                    Deposit deposit = new Deposit(amount, "Deposit");
+                    transactions.add(deposit);
+                    saveData();
+                    return "Deposit successful";
+                } else {
+                    return "Account transactions list is null";
+                }
             }
         }
         return "Account not found";
     }
+
 
     public static void main(String[] args) {
         try {

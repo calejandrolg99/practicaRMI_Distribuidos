@@ -29,7 +29,9 @@ public class User {
         return null;
     }
 
-    // Añade los demás getters y setters según sean necesarios
+    public List<Account> getAccounts() {
+    return this.accounts;
+    }
 
     public String getDocumentId() {
         return this.documentId;

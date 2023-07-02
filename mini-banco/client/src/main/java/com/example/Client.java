@@ -28,23 +28,32 @@ public class Client {
 
                 String accountNumber;
                 double amount;
+                String id;
+                String password;
 
                 switch (choice) {
                     case 1:
                         System.out.print("Ingrese ID:\n");
-                        String id = sc.next();
+                        id = sc.next();
                         System.out.print("Ingrese Nombre:\n");
                         String name = sc.next();
                         System.out.print("Ingrese Nombre de Usuario:\n");
                         String username = sc.next();
                         System.out.print("Ingrese Contraseña:\n");
-                        String password = sc.next();
-                        System.out.println(bank.createAccount(id, name, username, password));
+                        password = sc.next();
+                        System.out.print("Ingrese Monto Inicial:\n");
+                        double initialAmount = sc.nextDouble();
+                        System.out.println(bank.createAccount(id, name, username, password, initialAmount));
                         System.out.println();
                         break;
 
                     case 2:
-                        System.out.print("Ingrese numero de cuenta:\n");
+                        System.out.print("Ingrese ID de Usuario:\n");
+                        id = sc.next();
+                        System.out.print("Ingrese Contraseña:\n");
+                        password = sc.next();
+                        System.out.print(bank.getAccountDetails(id, password));
+                        System.out.println();
                         break;
 
                     case 3:

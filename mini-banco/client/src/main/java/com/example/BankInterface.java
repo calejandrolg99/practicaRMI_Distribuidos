@@ -4,7 +4,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface BankInterface extends Remote {
-    String createAccount(String id, String name, String username, String password) throws RemoteException;
+    String createAccount(String id, String name, String username, String password, double initialAmount)
+            throws RemoteException;
 
     String deposit(String accountNumber, double amount) throws RemoteException;
 
@@ -12,5 +13,6 @@ public interface BankInterface extends Remote {
 
     String transfer(String fromAccountNumber, String toAccountNumber, double amount) throws RemoteException;
 
-    String getAccountDetails(String accountNumber) throws RemoteException;
+    String getAccountDetails(String userId, String password) throws RemoteException;
+
 }

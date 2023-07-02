@@ -20,6 +20,10 @@ public class User {
         this.accounts = new ArrayList<>();
     }
 
+    public boolean authenticate(String username, String password) {
+        return this.username.equals(username) && this.password.equals(password);
+    }
+
     public Account getAccount(String accountNumber) {
         for (Account account : accounts) {
             if (account.getAccountNumber().equals(accountNumber)) {
@@ -27,6 +31,10 @@ public class User {
             }
         }
         return null;
+    }
+
+    public String getId() {
+    return this.documentId;
     }
 
     public List<Account> getAccounts() {

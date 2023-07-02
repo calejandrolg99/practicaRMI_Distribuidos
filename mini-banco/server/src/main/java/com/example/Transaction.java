@@ -16,4 +16,21 @@ public abstract class Transaction {
         this.description = description;
         this.date = LocalDateTime.now();
     }
+
+    public String getId() {
+    return this.id;
+    }
+
+    public double getAmount() {
+        return this.amount;
+    }
+    
+    public String getDescription() {
+        return this.description;
+    }
+    
+    public LocalDateTime getDate() {
+        return this.date;
+    }
+
 }

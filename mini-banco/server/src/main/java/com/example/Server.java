@@ -79,22 +79,51 @@ public class Server extends UnicastRemoteObject implements BankInterface {
     }
 
     @Override
-    public String getAccountDetails(String accountId) {
-        // Implementation of the getAccountDetails method
-        // Return the account details as a String
-        String whatever = "whatever";
-        return whatever;
+    public String getAccountDetails(String userId) {
+        StringBuilder details = new StringBuilder();
+        for (User user : users) {
+            if (user.getId().equals(userId)) {
+                for (Account account : user.getAccounts()) {
+                    details.append("Account Number: ").append(account.getAccountNumber()).append("\n");
+                    details.append("Balance: ").append(account.getBalance()).append("\n");
+                    details.append("Transactions: ").append("\n");
+                    for (Transaction transaction : account.getTransactions()) {
+                        details.append("Transaction ID: ").append(transaction.getId()).append("\n");
+                        details.append("Amount: ").append(transaction.getAmount()).append("\n");
+                        details.append("Description: ").append(transaction.getDescription()).append("\n");
+                        details.append("Date: ").append(transaction.getDate()).append("\n");
+                        if (transaction instanceof Transference) {
+                            Transference transference = (Transference) transaction;
+                            details.append("To Account: ").append(transference.getDestinationAccount().getAccountNumber()).append("\n");
+                        }
+                        details.append("\n");
+                    }
+                    details.append("\n");
+                }
+            }
+        }
+        return details.toString();
     }
 
     @Override
-    public String createAccount(String id, String name, String username, String password) throws RemoteException {
-        User newUser = new User(id, name, username, password);
+    public String createAccount(String documentNumber, String name, String username, String password, double initialAmount) throws RemoteException {
+        for (User user : users) {
+            if (user.getId().equals(documentNumber)) {
+                if (user.getAccounts().size() >= 3) {
+                    return "You have reached the limit of accounts.";
+                }
 
-        // Generar un número de cuenta aleatorio
+                if (!user.authenticate(username, password)) {
+                    return "Invalid credentials.";
+                }
+            }
+        }
+
+        User newUser = new User(documentNumber, name, username, password);
+
         String accountNumber = String.format("%09d", new Random().nextInt(1_000_000_000));
 
-        // Crear una nueva cuenta y añadirla a la lista de cuentas del usuario
-        Account newAccount = new Account(accountNumber, 0);
+        Account newAccount = new Account(accountNumber, initialAmount);
         newUser.getAccounts().add(newAccount);
 
         users.add(newUser);

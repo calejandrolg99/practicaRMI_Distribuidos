@@ -11,4 +11,9 @@ public class Transference extends Transaction {
         super(amount, description);
         this.destinationAccount = destinationAccount;
     }
+
+    public Account getDestinationAccount() {
+    return this.destinationAccount;
+    }
+
 }

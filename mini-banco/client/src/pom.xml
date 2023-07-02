@@ -23,12 +23,11 @@
             <manifest>
                 <addClasspath>true</addClasspath>
                 <classpathPrefix>lib/</classpathPrefix>
-                <mainClass>Client</mainClass>
+                <mainClass>com.example.Client</mainClass>
             </manifest>
           </archive>
         </configuration>
       </plugin>
     </plugins>
-    <sourceDirectory>main</sourceDirectory>
   </build>
 </project>

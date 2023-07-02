@@ -6,4 +6,4 @@ RUN mvn package -DskipTests
 FROM openjdk:11-jre-slim
 WORKDIR /app
 COPY --from=build /app/target/client-1.0-SNAPSHOT.jar ./client.jar
-CMD ["java", "-jar", "/app/client.jar"]
+CMD ["java", "-jar", "./client.jar"]

@@ -7,5 +7,5 @@ public interface BankInterface extends Remote {
     String deposit(String accountNumber, double amount) throws RemoteException;
     String withdraw(String accountNumber, double amount) throws RemoteException;
     String transfer(String fromAccountNumber, String toAccountNumber, double amount) throws RemoteException;
-    String getAccountDetails(String accountNumber) throws RemoteException;
+    String getAccountDetails(String accountNumber, String password) throws RemoteException;
 }

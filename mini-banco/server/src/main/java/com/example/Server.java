@@ -27,18 +27,19 @@ public class Server extends UnicastRemoteObject implements BankInterface {
         users = new ArrayList<>();
     }
 
-    // implement all the methods from the BankInterface interface
-    // and override the methods from the BankInterface interface
-    // in this class
-
+    @Override
     public String withdraw(String accountNumber, double amount) throws RemoteException {
         for (User user : users) {
             Account account = user.getAccount(accountNumber);
             if (account != null) {
                 List<Transaction> transactions = account.getTransactions();
                 if (transactions != null) {
+                    if (account.getBalance() < amount) {
+                        return "Insufficient balance";
+                    }
                     Withdrawal withdrawal = new Withdrawal(amount, "Withdraw");
                     transactions.add(withdrawal);
+                    account.setBalance(account.getBalance() - amount);
                     saveData();
                     return "Withdraw successful";
                 } else {
@@ -49,34 +50,42 @@ public class Server extends UnicastRemoteObject implements BankInterface {
         return "Account not found";
     }
 
+
+
     public String transfer(String fromAccountNumber, String toAccountNumber, double amount) throws RemoteException {
         for (User user : users) {
-            Account account = user.getAccount(fromAccountNumber);
-            if (account != null) {
-                List<Transaction> transactions = account.getTransactions();
+            Account fromAccount = user.getAccount(fromAccountNumber);
+            if (fromAccount != null) {
+                List<Transaction> transactions = fromAccount.getTransactions();
                 if (transactions != null) {
                     for (User user2 : users) {
-                        Account account2 = user2.getAccount(toAccountNumber);
-                        if (account2 != null) {
-                            List<Transaction> transactions2 = account2.getTransactions();
+                        Account toAccount = user2.getAccount(toAccountNumber);
+                        if (toAccount != null) {
+                            if (fromAccount.getBalance() < amount) {
+                                return "Insufficient balance";
+                            }
+                            List<Transaction> transactions2 = toAccount.getTransactions();
                             if (transactions2 != null) {
                                 Transference transfer = new Transference(amount, "Transfer",
                                         user2.getAccount(toAccountNumber));
                                 user.getAccount(toAccountNumber).getTransactions().add(transfer);
+                                fromAccount.setBalance(fromAccount.getBalance() - amount);
+                                toAccount.setBalance(toAccount.getBalance() + amount);
                                 saveData();
                                 return "Transfer successful";
                             } else {
-                                return "From Account transactions list is null";
+                                return "To Account transactions list is null";
                             }
                         }
                     }
                 } else {
-                    return "To Account transactions list is null";
+                    return "From Account transactions list is null";
                 }
             }
         }
         return "Account not found";
     }
+
 
     @Override
     public String getAccountDetails(String userId, String password) throws RemoteException {
@@ -153,6 +162,8 @@ public class Server extends UnicastRemoteObject implements BankInterface {
                 if (transactions != null) {
                     Deposit deposit = new Deposit(amount, "Deposit");
                     transactions.add(deposit);
+                    // Update the account balance
+                    account.setBalance(account.getBalance() + amount);
                     saveData();
                     return "Deposit successful";
                 } else {
@@ -162,6 +173,7 @@ public class Server extends UnicastRemoteObject implements BankInterface {
         }
         return "Account not found";
     }
+
 
     public static void main(String[] args) {
         try {

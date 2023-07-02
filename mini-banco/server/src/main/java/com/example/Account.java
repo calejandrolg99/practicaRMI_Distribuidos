@@ -21,8 +21,6 @@ public class Account {
         return this.accountNumber;
     }
 
-    // Añade los demás getters y setters según sean necesarios
-
     public double getBalance() {
         return this.balance;
     }

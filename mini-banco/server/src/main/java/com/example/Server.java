@@ -1,4 +1,5 @@
 package com.example;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.rmi.RemoteException;
@@ -26,32 +27,51 @@ public class Server extends UnicastRemoteObject implements BankInterface {
         users = new ArrayList<>();
     }
 
-    //implement all the methods from the BankInterface interface
-    //and override the methods from the BankInterface interface
-    //in this class
+    // implement all the methods from the BankInterface interface
+    // and override the methods from the BankInterface interface
+    // in this class
 
     public String withdraw(String accountNumber, double amount) throws RemoteException {
         for (User user : users) {
-            if (user.getAccount(accountNumber).equals(accountNumber)) {
-                Withdrawal withdraw = new Withdrawal(amount, "Withdraw");
-                user.getAccount(accountNumber).getTransactions().add(withdraw);
-                saveData();
-                return "Withdraw successful";
+            Account account = user.getAccount(accountNumber);
+            if (account != null) {
+                List<Transaction> transactions = account.getTransactions();
+                if (transactions != null) {
+                    Withdrawal withdrawal = new Withdrawal(amount, "Withdraw");
+                    transactions.add(withdrawal);
+                    saveData();
+                    return "Withdraw successful";
+                } else {
+                    return "Account transactions list is null";
+                }
             }
         }
         return "Account not found";
     }
 
-    public String transfer (String fromAccountNumber, String toAccountNumber, double amount) throws RemoteException {
+    public String transfer(String fromAccountNumber, String toAccountNumber, double amount) throws RemoteException {
         for (User user : users) {
-            if (user.getAccount(fromAccountNumber).equals(fromAccountNumber)) {
-                for (User user2 : users) {
-                    if (user2.getAccount(toAccountNumber).equals(toAccountNumber)) {
-                        Transference transfer = new Transference(amount, "Transfer", user2.getAccount(toAccountNumber));
-                        user.getAccount(toAccountNumber).getTransactions().add(transfer);
-                        saveData();
-                        return "Transfer successful";
+            Account account = user.getAccount(fromAccountNumber);
+            if (account != null) {
+                List<Transaction> transactions = account.getTransactions();
+                if (transactions != null) {
+                    for (User user2 : users) {
+                        Account account2 = user2.getAccount(toAccountNumber);
+                        if (account2 != null) {
+                            List<Transaction> transactions2 = account2.getTransactions();
+                            if (transactions2 != null) {
+                                Transference transfer = new Transference(amount, "Transfer",
+                                        user2.getAccount(toAccountNumber));
+                                user.getAccount(toAccountNumber).getTransactions().add(transfer);
+                                saveData();
+                                return "Transfer successful";
+                            } else {
+                                return "From Account transactions list is null";
+                            }
+                        }
                     }
+                } else {
+                    return "To Account transactions list is null";
                 }
             }
         }
@@ -75,7 +95,7 @@ public class Server extends UnicastRemoteObject implements BankInterface {
 
         // Crear una nueva cuenta y añadirla a la lista de cuentas del usuario
         Account newAccount = new Account(accountNumber, 0);
-        newUser.getAccounts().add(newAccount); 
+        newUser.getAccounts().add(newAccount);
 
         users.add(newUser);
         saveData();
@@ -101,7 +121,6 @@ public class Server extends UnicastRemoteObject implements BankInterface {
         return "Account not found";
     }
 
-
     public static void main(String[] args) {
         try {
             Server server = loadData();
@@ -122,31 +141,32 @@ public class Server extends UnicastRemoteObject implements BankInterface {
         }
     }
 
-private static Server loadData() throws IOException {
-    File file = new File("data.json");
-    ObjectMapper mapper = new ObjectMapper();
-    Server server = null;
-    
-    // Check if the file is empty
-    if (file.length() == 0) {
-        // If the file is empty, initialize server with an empty list of users
-        try {
-            server = new Server();
-        } catch (RemoteException e) {
-            e.printStackTrace();
+    private static Server loadData() throws IOException {
+        File file = new File("data.json");
+        ObjectMapper mapper = new ObjectMapper();
+        Server server = null;
+
+        // Check if the file is empty
+        if (file.length() == 0) {
+            // If the file is empty, initialize server with an empty list of users
+            try {
+                server = new Server();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // If the file is not empty, read the list of users from the file
+            List<User> users = mapper.readValue(file, new TypeReference<List<User>>() {
+            });
+            try {
+                server = new Server();
+                server.users = users;
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
-    } else {
-        // If the file is not empty, read the list of users from the file
-        List<User> users = mapper.readValue(file, new TypeReference<List<User>>() {});
-        try {
-            server = new Server();
-            server.users = users;
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+
+        return server;
     }
-    
-    return server;
-}
 
 }

@@ -9,8 +9,6 @@ public class Client {
         try {
             Registry registry = LocateRegistry.getRegistry("my-running-server", 1099);
             BankInterface bank = (BankInterface) registry.lookup("Bank");
-            System.out.println(bank.createAccount("123", "John Doe", "johndoe", "password"));
-            System.out.println(bank.deposit("123", 1000));
 
             Scanner sc = new Scanner(System.in);
 

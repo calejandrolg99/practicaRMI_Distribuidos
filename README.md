@@ -8,7 +8,7 @@ Este proyecto es un simple Sistema Bancario implementado con Java RMI y MAVEN. R
 
 Este proyecto utiliza Java, MAVEN y RMI. Asegúrate de tener Java, MAVEN y Docker instalados en tu equipo antes de continuar.
 
-1. Clona el proyecto a tu máquina local utilizando `git clone https://github.com/tu-usuario/java-rmi-bank-system.git`.
+1. Clona el proyecto a tu máquina local utilizando `git clone https://github.com/calejandrolg99/practicaRMI_Distribuidos`.
 
 2. Construye la imagen del servidor con Docker:
 ```bash

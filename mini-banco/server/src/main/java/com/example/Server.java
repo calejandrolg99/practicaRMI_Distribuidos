@@ -105,6 +105,15 @@ public class Server extends UnicastRemoteObject implements BankInterface {
         return details.toString();
     }
 
+    public User authenticate(String documentId, String password) throws RemoteException {
+        for (User user : users) {
+            if (user.getId().equals(documentId) && user.getPassword().equals(password)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String createAccount(String documentNumber, String name, String username, String password, double initialAmount) throws RemoteException {
         for (User user : users) {

@@ -1,7 +1,3 @@
-Claro, aquí está el README en formato markdown y he incluido la mención a MAVEN:
-
----
-
 # Sistema Bancario con Java RMI
 
 ## Descripción

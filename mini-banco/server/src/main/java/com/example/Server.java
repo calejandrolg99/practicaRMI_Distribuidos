@@ -79,19 +79,20 @@ public class Server extends UnicastRemoteObject implements BankInterface {
     }
 
     @Override
-    public String getAccountDetails(String userId) {
-        StringBuilder details = new StringBuilder();
-        for (User user : users) {
-            if (user.getId().equals(userId)) {
-                for (Account account : user.getAccounts()) {
-                    details.append("Account Number: ").append(account.getAccountNumber()).append("\n");
-                    details.append("Balance: ").append(account.getBalance()).append("\n");
-                    details.append("Transactions: ").append("\n");
-                    for (Transaction transaction : account.getTransactions()) {
-                        details.append("Transaction ID: ").append(transaction.getId()).append("\n");
-                        details.append("Amount: ").append(transaction.getAmount()).append("\n");
-                        details.append("Description: ").append(transaction.getDescription()).append("\n");
-                        details.append("Date: ").append(transaction.getDate()).append("\n");
+    public String getAccountDetails(String userId, String password) throws RemoteException {
+        if (authenticate(userId, password) != null) {
+            StringBuilder details = new StringBuilder();
+            for (User user : users) {
+                if (user.getId().equals(userId)) {
+                    for (Account account : user.getAccounts()) {
+                        details.append("Account Number: ").append(account.getAccountNumber()).append("\n");
+                        details.append("Balance: ").append(account.getBalance()).append("\n");
+                        details.append("Transactions: ").append("\n");
+                        for (Transaction transaction : account.getTransactions()) {
+                            details.append("Transaction ID: ").append(transaction.getId()).append("\n");
+                            details.append("Amount: ").append(transaction.getAmount()).append("\n");
+                            details.append("Description: ").append(transaction.getDescription()).append("\n");
+                            details.append("Date: ").append(transaction.getDate()).append("\n");
                         if (transaction instanceof Transference) {
                             Transference transference = (Transference) transaction;
                             details.append("To Account: ").append(transference.getDestinationAccount().getAccountNumber()).append("\n");
@@ -102,7 +103,10 @@ public class Server extends UnicastRemoteObject implements BankInterface {
                 }
             }
         }
-        return details.toString();
+            return details.toString();
+        } else {
+            return "Invalid credentials.";
+        }
     }
 
     public User authenticate(String documentId, String password) throws RemoteException {
